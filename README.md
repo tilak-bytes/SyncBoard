@@ -8,6 +8,15 @@
 [![Socket.IO](https://img.shields.io/badge/Socket.IO-4.8+-black.svg)](https://socket.io/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248.svg)](https://www.mongodb.com/)
 
+---
+
+### 🌐 Live Demo & Instant Showcase
+👉 **[Open Live Demo: tilak-bytes.github.io/SyncBoard](https://tilak-bytes.github.io/SyncBoard/)**
+
+| 🚀 Live Web App | 🛠️ Deploy Full-Stack (Render) | ⚡ Deploy Frontend (Vercel) |
+| :---: | :---: | :---: |
+| [![Live Demo](https://img.shields.io/badge/Demo-Live_Web_App-6366f1?style=for-the-badge&logo=google-chrome&logoColor=white)](https://tilak-bytes.github.io/SyncBoard/) | [![Deploy to Render](https://img.shields.io/badge/Deploy_to-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://render.com/deploy?repo=https://github.com/tilak-bytes/SyncBoard) | [![Deploy with Vercel](https://img.shields.io/badge/Deploy_with-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/new/clone?repository-url=https://github.com/tilak-bytes/SyncBoard) |
+
 > **SyncBoard** is an enterprise-grade, real-time collaborative task management platform engineered with a clean modular-monolith architecture. It features JWT authentication, multi-tenant workspaces, drag-and-drop Kanban boards, **Optimistic Concurrency Control (OCC)**, live user presence tracking via Socket.IO, role-based access control (RBAC), and reconnection delta recovery.
 
 ---

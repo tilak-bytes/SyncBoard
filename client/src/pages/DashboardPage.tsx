@@ -42,19 +42,155 @@ export const DashboardPage: React.FC = () => {
 
   const lastSyncedAtRef = useRef<string>(new Date().toISOString());
 
-  // 1. Initial Load: Fetch Workspaces
+  // 1. Initial Load: Fetch Workspaces (with Offline Showcase Fallback)
   useEffect(() => {
     const loadWorkspaces = async () => {
       try {
         const res = await workspaceApi.getAll();
         if (res.data.success && res.data.workspaces.length > 0) {
           setWorkspaces(res.data.workspaces);
-          // Set first workspace
           setCurrentWorkspace(res.data.workspaces[0]);
+          return;
         }
       } catch (err) {
-        console.error('Failed to load workspaces:', err);
+        console.warn('API offline: using interactive showcase demo board');
       }
+
+      // Offline / Live Showcase Fallback Mode
+      const demoUsers = [
+        { id: 'u1', name: 'Alex Chen', email: 'alex@syncboard.dev', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150' },
+        { id: 'u2', name: 'Sarah Connor', email: 'sarah@syncboard.dev', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150' },
+        { id: 'u3', name: 'Jordan Smith', email: 'jordan@syncboard.dev', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150' },
+        { id: 'u4', name: 'Elena Rostova', email: 'elena@syncboard.dev', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150' },
+      ];
+
+      const demoWorkspace: Workspace = {
+        _id: 'ws-demo',
+        name: 'Acme Cloud Engineering',
+        description: 'High-performance collaborative engineering workspace (Showcase Mode)',
+        owner: demoUsers[0],
+        members: [
+          { user: demoUsers[0], role: 'owner', joinedAt: new Date().toISOString() },
+          { user: demoUsers[1], role: 'admin', joinedAt: new Date().toISOString() },
+          { user: demoUsers[2], role: 'member', joinedAt: new Date().toISOString() },
+          { user: demoUsers[3], role: 'viewer', joinedAt: new Date().toISOString() },
+        ],
+        currentUserRole: 'owner',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      const demoBoard: Board = {
+        _id: 'b-demo',
+        title: 'Sprint 42 - Core Platform',
+        description: 'Interactive real-time collaborative Kanban board',
+        workspace: 'ws-demo',
+        background: 'gradient-sunset',
+        isStarred: true,
+        createdBy: demoUsers[0],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      const demoColumns: Column[] = [
+        { _id: 'c1', title: 'Backlog', boardId: 'b-demo', order: 0, color: '#64748b', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { _id: 'c2', title: 'To Do', boardId: 'b-demo', order: 1, color: '#f59e0b', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { _id: 'c3', title: 'In Progress', boardId: 'b-demo', order: 2, color: '#3b82f6', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { _id: 'c4', title: 'Review', boardId: 'b-demo', order: 3, color: '#8b5cf6', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        { _id: 'c5', title: 'Done', boardId: 'b-demo', order: 4, color: '#10b981', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+      ];
+
+      const demoTasks: Task[] = [
+        {
+          _id: 't1',
+          title: 'Implement WebSocket delta sync for network drops',
+          description: 'Reconcile tasks without page reload on reconnect.',
+          boardId: 'b-demo',
+          columnId: 'c3',
+          order: 0,
+          priority: 'urgent',
+          dueDate: new Date(Date.now() + 86400000 * 2).toISOString(),
+          labels: ['realtime', 'socketio'],
+          assignees: [demoUsers[0], demoUsers[2]],
+          checklist: [
+            { id: '1', text: 'Store lastSyncedAt timestamp in client state', completed: true },
+            { id: '2', text: 'Listen for socket reconnect lifecycle event', completed: true },
+            { id: '3', text: 'Merge server delta tasks into React Kanban store', completed: false },
+          ],
+          version: 1,
+          createdBy: demoUsers[0],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          _id: 't2',
+          title: 'Design Glassmorphism Kanban Column and Card UI',
+          description: 'Sleek CSS tokens and modern drag ghost shadows.',
+          boardId: 'b-demo',
+          columnId: 'c5',
+          order: 0,
+          priority: 'high',
+          dueDate: new Date(Date.now() + 86400000 * 4).toISOString(),
+          labels: ['design', 'ui/ux'],
+          assignees: [demoUsers[1]],
+          checklist: [
+            { id: '1', text: 'Configure CSS root design tokens', completed: true },
+            { id: '2', text: 'Add fluid micro-interactions on task hover', completed: true },
+          ],
+          version: 2,
+          createdBy: demoUsers[1],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          _id: 't3',
+          title: 'Optimistic Concurrency Control (OCC) Version Conflict Handling',
+          description: 'Zero lost updates by checking integer version on task mutations.',
+          boardId: 'b-demo',
+          columnId: 'c4',
+          order: 0,
+          priority: 'urgent',
+          dueDate: new Date(Date.now() + 86400000).toISOString(),
+          labels: ['backend', 'concurrency'],
+          assignees: [demoUsers[0]],
+          checklist: [
+            { id: '1', text: 'Atomic findOneAndUpdate with version match', completed: true },
+            { id: '2', text: 'Client toast alert with reconciliation', completed: true },
+          ],
+          version: 3,
+          createdBy: demoUsers[0],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          _id: 't4',
+          title: 'Role-Based Access Control (RBAC) Enforcement',
+          description: 'Ensure Viewer accounts cannot move or mutate tasks.',
+          boardId: 'b-demo',
+          columnId: 'c2',
+          order: 0,
+          priority: 'medium',
+          dueDate: new Date(Date.now() + 86400000 * 5).toISOString(),
+          labels: ['security', 'rbac'],
+          assignees: [demoUsers[1], demoUsers[0]],
+          checklist: [
+            { id: '1', text: 'Define hierarchy: Owner > Admin > Member > Viewer', completed: true },
+            { id: '2', text: 'Disable drag handles for Viewers in frontend UI', completed: true },
+          ],
+          version: 1,
+          createdBy: demoUsers[1],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ];
+
+      setWorkspaces([demoWorkspace]);
+      setCurrentWorkspace(demoWorkspace);
+      setBoards([demoBoard]);
+      setCurrentBoard(demoBoard);
+      setColumns(demoColumns);
+      setTasks(demoTasks);
+      setIsLoading(false);
     };
     loadWorkspaces();
   }, []);

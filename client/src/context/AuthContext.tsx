@@ -88,7 +88,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const quickLogin = async (role: 'owner' | 'admin' | 'member' | 'viewer') => {
     const account = DEMO_ACCOUNTS[role];
-    await login(account.email, 'Password123!');
+    try {
+      await login(account.email, 'Password123!');
+    } catch {
+      // Offline / Static Preview Mode Fallback:
+      const mockUser: User = {
+        id: `mock-${role}`,
+        name: account.name,
+        email: account.email,
+        avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(account.name)}`,
+      };
+      setUser(mockUser);
+      setToken(`demo-token-${role}`);
+      localStorage.setItem('syncboard_token', `demo-token-${role}`);
+      localStorage.setItem('syncboard_user', JSON.stringify(mockUser));
+    }
   };
 
   const logout = () => {
