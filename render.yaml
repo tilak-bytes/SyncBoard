@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: syncboard-api
+    env: node
+    plan: free
+    buildCommand: npm install --prefix server && npm run build --prefix server
+    startCommand: npm run start --prefix server
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CLIENT_ORIGIN
+        sync: false
+
+  - type: web
+    name: syncboard-client
+    env: static
+    plan: free
+    buildCommand: npm install --prefix client && npm run build --prefix client
+    staticPublishPath: client/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

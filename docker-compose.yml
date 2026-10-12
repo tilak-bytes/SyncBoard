@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: syncboard_mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: syncboard
+    volumes:
+      - mongodb_data:/data/db
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: syncboard_app
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      NODE_ENV: production
+      MONGODB_URI: mongodb://mongodb:27017/syncboard
+      JWT_SECRET: syncboard_jwt_production_secret_key_8849
+      JWT_EXPIRES_IN: 7d
+      CLIENT_ORIGIN: http://localhost:5173
+    depends_on:
+      - mongodb
+
+volumes:
+  mongodb_data:
